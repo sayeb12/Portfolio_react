@@ -221,11 +221,12 @@ const PROJECTS = [
     num: "08",
     name: "Homemade Food Delivery",
     type: "IDP / Delivery Platform",
-    link: "https://github.com/sayeb12/Homemade_Food_Delivery_System",
-    cta: "View Code",
+    link: "https://hmfd.rf.gd/",
+    cta: "Live Demo",
     desc: "Integrated design project connecting home chefs with local customers through order management, delivery tracking, payments, and maps.",
     tech: ["PHP", "MySQL", "JavaScript", "Google Maps API"],
     accent: "#BBCCD7",
+    preview: "live",
   },
 ];
 

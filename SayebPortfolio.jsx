@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import Hls from "hls.js";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { BrainCircuit, Code2, Database, Network, RadioTower, ServerCog } from "lucide-react";
+import { ArrowUp, BrainCircuit, Code2, Database, Network, RadioTower, ServerCog } from "lucide-react";
 
 const PROFILE = {
   name: "MD Abu Ubaida Jubaer Sayeb",
@@ -12,6 +13,10 @@ const PROFILE = {
 
 const HERO_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_171521_25968ba2-b594-4b32-aab7-f6b69398a6fa.mp4";
+const SKILLS_VIDEO =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260330_145725_08886141-ed95-4a8e-8d6d-b75eaadce638.mp4";
+const CONTACT_VIDEO =
+  "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
 const SKILLS = [
   "Python",
@@ -252,6 +257,8 @@ function useGlobalStyles() {
       .hero{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#060410}
       .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.92;filter:saturate(1.18) contrast(1.02) brightness(.98)}
       .hero-video-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 50% 30%,rgba(12,12,12,0),rgba(12,12,12,.12) 55%,rgba(12,12,12,.5) 100%),linear-gradient(180deg,rgba(12,12,12,0),rgba(12,12,12,.16) 62%,#0C0C0C 99%);pointer-events:none}
+      .section-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.88;filter:saturate(1.16) contrast(1.03) brightness(.94)}
+      .section-video-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 50% 28%,rgba(12,12,12,.02),rgba(12,12,12,.18) 55%,rgba(12,12,12,.56) 100%),linear-gradient(180deg,rgba(12,12,12,.08),rgba(12,12,12,.18) 60%,#0C0C0C 100%);pointer-events:none}
       .hero::before{content:"";position:absolute;inset:14% -20% auto -20%;height:42%;background:radial-gradient(circle,#2c1634 0%,rgba(44,22,52,0) 68%);opacity:.28;pointer-events:none;z-index:2}
       .hero-title{font-size:clamp(3.4rem,15vw,13rem);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:0;white-space:normal;max-width:100%;overflow-wrap:anywhere}
       .portrait-wrap{position:absolute;left:50%;bottom:0;z-index:9;transform:translateX(-50%);perspective:1200px}
@@ -292,8 +299,9 @@ function useGlobalStyles() {
       .decor-bl{bottom:8%;left:clamp(3%,10vw,10%);width:clamp(100px,13vw,180px)}
       .decor-tr{top:4%;right:clamp(1%,4vw,4%);width:clamp(120px,15vw,210px)}
       .decor-br{bottom:8%;right:clamp(3%,10vw,10%);width:clamp(130px,16vw,220px)}
-      .skills-section{background:#0C0C0C;padding:clamp(5rem,8vw,8rem) clamp(1rem,5vw,2.5rem);overflow:hidden}
-      .skills-shell{max-width:1180px;margin:clamp(2.5rem,5vw,5rem) auto 0;border:1px solid rgba(215,226,234,.16);border-radius:30px;background:radial-gradient(circle at 20% 10%,rgba(182,0,168,.17),transparent 32%),linear-gradient(145deg,rgba(215,226,234,.055),rgba(190,76,0,.06));padding:clamp(1rem,2vw,1.5rem);box-shadow:0 28px 90px rgba(0,0,0,.28)}
+      .skills-section{background:#0C0C0C;padding:clamp(5rem,8vw,8rem) clamp(1rem,5vw,2.5rem);overflow:hidden;position:relative}
+      .section-content{position:relative;z-index:2}
+      .skills-shell{max-width:1180px;margin:clamp(2.5rem,5vw,5rem) auto 0;border:1px solid rgba(215,226,234,.16);border-radius:30px;background:radial-gradient(circle at 20% 10%,rgba(182,0,168,.14),transparent 32%),linear-gradient(145deg,rgba(12,12,12,.5),rgba(12,12,12,.32));padding:clamp(1rem,2vw,1.5rem);box-shadow:0 28px 90px rgba(0,0,0,.28);backdrop-filter:blur(8px)}
       .skill-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(.7rem,1.5vw,1rem)}
       .skill-tile{aspect-ratio:1;border-radius:18px;border:1px solid rgba(215,226,234,.18);background:linear-gradient(145deg,rgba(215,226,234,.08),rgba(182,0,168,.08));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;color:#D7E2EA;text-transform:uppercase;font-size:clamp(.58rem,.85vw,.75rem);letter-spacing:.06em;text-align:center;box-shadow:0 20px 55px rgba(0,0,0,.18);will-change:transform;position:relative;overflow:hidden}
       .skill-tile::before{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent,rgba(215,226,234,.16),transparent);transform:translateX(-70%) rotate(16deg);transition:transform .6s ease}
@@ -316,6 +324,8 @@ function useGlobalStyles() {
       .preview-bars{display:grid;grid-template-columns:1fr .7fr;gap:.8rem}
       .preview-panel{min-height:88px;border-radius:14px;background:rgba(215,226,234,.1);border:1px solid rgba(215,226,234,.12)}
       .research-card{border:1px solid rgba(215,226,234,.12);border-radius:24px;padding:clamp(2rem,4vw,3.5rem);position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(118,33,176,.08),transparent 60%)}
+      .contact-section{background:#0C0C0C;position:relative;overflow:hidden}
+      .scroll-top{position:fixed;right:clamp(1rem,3vw,1.5rem);bottom:clamp(1rem,3vw,1.5rem);z-index:9998;width:54px;height:54px;border-radius:50%;border:1px solid rgba(215,226,234,.22);background:rgba(12,12,12,.58);backdrop-filter:blur(12px);color:#D7E2EA;display:flex;align-items:center;justify-content:center}
       @media (max-width:760px){
         .hero{min-height:780px}
         nav{gap:.65rem;flex-wrap:wrap}
@@ -432,6 +442,47 @@ function ScrollBar() {
   );
 }
 
+function ScrollTopButton() {
+  const { scrollYProgress } = useScroll();
+  const pathLength = useSpring(scrollYProgress, { stiffness: 120, damping: 26 });
+
+  return (
+    <motion.button
+      className="scroll-top"
+      type="button"
+      aria-label="Scroll to top"
+      data-cursor
+      initial={{ opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.94 }}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+    >
+      <svg width="54" height="54" viewBox="0 0 54 54" style={{ position: "absolute", inset: 0, transform: "rotate(-90deg)" }}>
+        <circle cx="27" cy="27" r="23" fill="none" stroke="rgba(215,226,234,.12)" strokeWidth="2" />
+        <motion.circle
+          cx="27"
+          cy="27"
+          r="23"
+          fill="none"
+          stroke="url(#scrollGradient)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          style={{ pathLength }}
+        />
+        <defs>
+          <linearGradient id="scrollGradient" x1="0" y1="0" x2="54" y2="54">
+            <stop stopColor="#7621B0" />
+            <stop offset="0.55" stopColor="#B600A8" />
+            <stop offset="1" stopColor="#BBCCD7" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <ArrowUp size={20} strokeWidth={2} style={{ position: "relative", zIndex: 1 }} />
+    </motion.button>
+  );
+}
+
 function AmbientGlow() {
   const [pos, setPos] = useState({ x: -500, y: -500 });
 
@@ -456,6 +507,38 @@ function AmbientGlow() {
         pointerEvents: "none",
         zIndex: 0,
       }}
+    />
+  );
+}
+
+function VideoBackground({ src, className = "section-video" }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    if (src.endsWith(".m3u8") && Hls.isSupported()) {
+      const hls = new Hls({ enableWorker: true });
+      hls.loadSource(src);
+      hls.attachMedia(video);
+      return () => hls.destroy();
+    }
+
+    video.src = src;
+    return undefined;
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      className={className}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      src={!src.endsWith(".m3u8") ? src : undefined}
     />
   );
 }
@@ -940,63 +1023,67 @@ function AboutSection() {
 function SkillsSection() {
   return (
     <section id="skills" className="skills-section">
-      <FadeIn>
-        <h2 className="hg section-title">Skills</h2>
-      </FadeIn>
-      <FadeIn delay={0.12}>
-        <p
-          style={{
-            color: "#D7E2EA",
-            opacity: 0.68,
-            textAlign: "center",
-            maxWidth: "620px",
-            margin: "1rem auto 0",
-            lineHeight: 1.65,
-            fontSize: "clamp(.92rem,1.35vw,1.08rem)",
-          }}
-        >
-          Tools and technologies I use across web platforms, telecom systems, APIs, and computer vision projects.
-        </p>
-      </FadeIn>
-      <div className="skills-shell">
-        <div className="skill-grid">
-          {SKILL_ICONS.map(([name, icon], index) => {
-            const Icon = FALLBACK_ICONS[name];
-            return (
-              <motion.div
-                key={name}
-                className="skill-tile"
-                initial={{ opacity: 0, y: 34, rotateX: 18, scale: 0.92 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                viewport={{ once: true, amount: 0.2 }}
-                whileHover={{
-                  y: -12,
-                  scale: 1.05,
-                  rotateX: 6,
-                  rotateY: index % 2 ? -7 : 7,
-                  borderColor: "rgba(215,226,234,.45)",
-                }}
-                transition={{ duration: 0.58, delay: index * 0.035, ease: [0.25, 0.1, 0.25, 1] }}
-              >
+      <VideoBackground src={SKILLS_VIDEO} />
+      <div className="section-video-overlay" />
+      <div className="section-content">
+        <FadeIn>
+          <h2 className="hg section-title">Skills</h2>
+        </FadeIn>
+        <FadeIn delay={0.12}>
+          <p
+            style={{
+              color: "#D7E2EA",
+              opacity: 0.82,
+              textAlign: "center",
+              maxWidth: "620px",
+              margin: "1rem auto 0",
+              lineHeight: 1.65,
+              fontSize: "clamp(.92rem,1.35vw,1.08rem)",
+            }}
+          >
+            Tools and technologies I use across web platforms, telecom systems, APIs, and computer vision projects.
+          </p>
+        </FadeIn>
+        <div className="skills-shell">
+          <div className="skill-grid">
+            {SKILL_ICONS.map(([name, icon], index) => {
+              const Icon = FALLBACK_ICONS[name];
+              return (
                 <motion.div
-                  animate={{ y: [0, index % 2 ? 5 : -5, 0], rotate: [0, index % 2 ? 2 : -2, 0] }}
-                  transition={{ duration: 3.8 + (index % 5) * 0.35, repeat: Infinity, ease: "easeInOut" }}
-                  style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: ".55rem" }}
+                  key={name}
+                  className="skill-tile"
+                  initial={{ opacity: 0, y: 34, rotateX: 18, scale: 0.92 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  whileHover={{
+                    y: -12,
+                    scale: 1.05,
+                    rotateX: 6,
+                    rotateY: index % 2 ? -7 : 7,
+                    borderColor: "rgba(215,226,234,.45)",
+                  }}
+                  transition={{ duration: 0.58, delay: index * 0.035, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                  {icon ? (
-                    <img src={icon} alt="" loading="lazy" />
-                  ) : Icon ? (
-                    <span className="skill-fallback">
-                      <Icon size={26} strokeWidth={1.8} />
-                    </span>
-                  ) : (
-                    <span className="skill-fallback">{name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</span>
-                  )}
-                  <span>{name}</span>
+                  <motion.div
+                    animate={{ y: [0, index % 2 ? 5 : -5, 0], rotate: [0, index % 2 ? 2 : -2, 0] }}
+                    transition={{ duration: 3.8 + (index % 5) * 0.35, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: ".55rem" }}
+                  >
+                    {icon ? (
+                      <img src={icon} alt="" loading="lazy" />
+                    ) : Icon ? (
+                      <span className="skill-fallback">
+                        <Icon size={26} strokeWidth={1.8} />
+                      </span>
+                    ) : (
+                      <span className="skill-fallback">{name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</span>
+                    )}
+                    <span>{name}</span>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -1274,41 +1361,45 @@ function ResearchSection() {
 
 function ContactSection() {
   return (
-    <section id="contact" className="section" style={{ background: "#0C0C0C", borderTop: "1px solid rgba(215,226,234,.08)", textAlign: "center" }}>
-      <FadeIn>
-        <h2 className="hg section-title">Let&apos;s Talk</h2>
-      </FadeIn>
-      <FadeIn delay={0.12}>
-        <p style={{ color: "#D7E2EA", opacity: 0.76, lineHeight: 1.7, maxWidth: "560px", margin: "1.5rem auto 2.5rem", fontWeight: 300, fontSize: "clamp(.95rem,1.55vw,1.18rem)" }}>
-          Open to freelance projects, full-time opportunities, research collaboration, and full stack product work.
+    <section id="contact" className="section contact-section" style={{ borderTop: "1px solid rgba(215,226,234,.08)", textAlign: "center" }}>
+      <VideoBackground src={CONTACT_VIDEO} />
+      <div className="section-video-overlay" />
+      <div className="section-content">
+        <FadeIn>
+          <h2 className="hg section-title">Let&apos;s Talk</h2>
+        </FadeIn>
+        <FadeIn delay={0.12}>
+          <p style={{ color: "#D7E2EA", opacity: 0.86, lineHeight: 1.7, maxWidth: "560px", margin: "1.5rem auto 2.5rem", fontWeight: 300, fontSize: "clamp(.95rem,1.55vw,1.18rem)" }}>
+            Open to freelance projects, full-time opportunities, research collaboration, and full stack product work.
+          </p>
+        </FadeIn>
+        <FadeIn delay={0.2}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "clamp(.8rem,2vw,1.5rem)", flexWrap: "wrap", marginBottom: "2.5rem" }}>
+            {[
+              [PROFILE.email, `mailto:${PROFILE.email}`],
+              ["github.com/sayeb12", PROFILE.github],
+              ["Portfolio", PROFILE.portfolio],
+              [PROFILE.phone, `tel:${PROFILE.phone}`],
+            ].map(([label, href]) => (
+              <a
+                key={label}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                style={{ color: "#D7E2EA", textDecoration: "none", opacity: 0.76, borderBottom: "1px solid rgba(215,226,234,.22)", paddingBottom: ".1rem", fontSize: "clamp(.78rem,1.2vw,1rem)" }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </FadeIn>
+        <FadeIn delay={0.28}>
+          <ContactButton />
+        </FadeIn>
+        <p style={{ color: "#D7E2EA", opacity: 0.3, marginTop: "4rem", fontSize: ".78rem", letterSpacing: ".06em" }}>
+          Designed and built with care / {PROFILE.name} / Dhaka, Bangladesh
         </p>
-      </FadeIn>
-      <FadeIn delay={0.2}>
-        <div style={{ display: "flex", justifyContent: "center", gap: "clamp(.8rem,2vw,1.5rem)", flexWrap: "wrap", marginBottom: "2.5rem" }}>
-          {[
-            [PROFILE.email, `mailto:${PROFILE.email}`],
-            ["github.com/sayeb12", PROFILE.github],
-            ["Portfolio", PROFILE.portfolio],
-            [PROFILE.phone, `tel:${PROFILE.phone}`],
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              style={{ color: "#D7E2EA", textDecoration: "none", opacity: 0.58, borderBottom: "1px solid rgba(215,226,234,.16)", paddingBottom: ".1rem", fontSize: "clamp(.78rem,1.2vw,1rem)" }}
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-      </FadeIn>
-      <FadeIn delay={0.28}>
-        <ContactButton />
-      </FadeIn>
-      <p style={{ color: "#D7E2EA", opacity: 0.22, marginTop: "4rem", fontSize: ".78rem", letterSpacing: ".06em" }}>
-        Designed and built with care / {PROFILE.name} / Dhaka, Bangladesh
-      </p>
+      </div>
     </section>
   );
 }
@@ -1319,6 +1410,7 @@ export default function SayebPortfolio() {
     <main style={{ background: "#0C0C0C", overflowX: "hidden", fontFamily: "'Kanit', sans-serif" }}>
       <CustomCursor />
       <ScrollBar />
+      <ScrollTopButton />
       <AmbientGlow />
       <HeroSection />
       <MarqueeSection />

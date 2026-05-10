@@ -17,6 +17,8 @@ const SKILLS_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4";
 const CONTACT_VIDEO =
   "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
+const PROJECTS_VIDEO =
+  "https://stream.mux.com/sDz01Os9GN02ltJvgikeaUvZWsLRiR5FX5GuadCRkQc7E.m3u8";
 
 const SKILLS = [
   "Python",
@@ -1282,17 +1284,22 @@ function ProjectsSection() {
         marginTop: "clamp(-3rem,-3vw,-2rem)",
         position: "relative",
         zIndex: 2,
+        overflow: "hidden",
       }}
     >
-      <FadeIn>
-        <h2 className="hg section-title" style={{ marginBottom: "clamp(2.5rem,5vw,5rem)" }}>
-          Projects
-        </h2>
-      </FadeIn>
-      <div ref={ref} className="project-list">
-        {PROJECTS.map((project, index) => (
-          <ProjectCard key={project.num} project={project} index={index} progress={scrollYProgress} />
-        ))}
+      <VideoBackground src={PROJECTS_VIDEO} />
+      <div className="section-video-overlay" />
+      <div className="section-content">
+        <FadeIn>
+          <h2 className="hg section-title" style={{ marginBottom: "clamp(2.5rem,5vw,5rem)" }}>
+            Projects
+          </h2>
+        </FadeIn>
+        <div ref={ref} className="project-list">
+          {PROJECTS.map((project, index) => (
+            <ProjectCard key={project.num} project={project} index={index} progress={scrollYProgress} />
+          ))}
+        </div>
       </div>
     </section>
   );

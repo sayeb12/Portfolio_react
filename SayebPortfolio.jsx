@@ -202,6 +202,7 @@ const PROJECTS = [
     name: "Homemade Food Delivery",
     type: "IDP / Delivery Platform",
     link: "https://hmfd.rf.gd/",
+    previewLink: "https://hmfd.rf.gd/?i=1",
     cta: "Live Demo",
     desc: "Integrated design project connecting home chefs with local customers through order management, delivery tracking, payments, and maps.",
     tech: ["PHP", "MySQL", "JavaScript", "Google Maps API"],
@@ -1150,9 +1151,11 @@ function ProjectPreview({ project }) {
         </div>
         <iframe
           className="preview-frame"
-          src={project.link}
+          src={project.previewLink ?? project.link}
           title={`${project.name} live preview`}
           loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allow="fullscreen; clipboard-read; clipboard-write"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         />
       </div>

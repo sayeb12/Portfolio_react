@@ -250,8 +250,8 @@ function useGlobalStyles() {
       .pill:hover{background:rgba(215,226,234,.1);transform:translateY(-1px)}
       .gradient-button{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:0;outline:2px solid #fff;outline-offset:-3px;background:linear-gradient(123deg,#18011F 7%,#B600A8 37%,#7621B0 72%,#BE4C00 100%);box-shadow:0 4px 4px rgba(181,1,167,.25),inset 4px 4px 12px #7721B1;color:white;text-decoration:none;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:clamp(.72rem,1.2vw,1rem) clamp(1.35rem,3vw,2.5rem);font-size:clamp(.72rem,.95vw,.9rem);white-space:nowrap}
       .hero{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#060410}
-      .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.52;filter:saturate(.8) contrast(1.08) brightness(.52)}
-      .hero-video-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 50% 28%,rgba(12,12,12,.08),rgba(12,12,12,.42) 48%,rgba(12,12,12,.9) 100%),linear-gradient(180deg,rgba(12,12,12,.18),#0C0C0C 96%);pointer-events:none}
+      .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.92;filter:saturate(1.18) contrast(1.02) brightness(.98)}
+      .hero-video-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 50% 30%,rgba(12,12,12,0),rgba(12,12,12,.12) 55%,rgba(12,12,12,.5) 100%),linear-gradient(180deg,rgba(12,12,12,0),rgba(12,12,12,.16) 62%,#0C0C0C 99%);pointer-events:none}
       .hero::before{content:"";position:absolute;inset:14% -20% auto -20%;height:42%;background:radial-gradient(circle,#2c1634 0%,rgba(44,22,52,0) 68%);opacity:.28;pointer-events:none;z-index:2}
       .hero-title{font-size:clamp(3.4rem,15vw,13rem);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:0;white-space:normal;max-width:100%;overflow-wrap:anywhere}
       .portrait-wrap{position:absolute;left:50%;bottom:0;z-index:9;transform:translateX(-50%);perspective:1200px}
@@ -826,23 +826,10 @@ function HeroSection() {
                 <div style={{ fontSize: "1.25rem", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>3.69</div>
                 <div style={{ fontSize: ".58rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: ".1em", marginTop: 2 }}>CGPA / 4.00</div>
               </motion.div>
-
-              <motion.div
-                className="float-badge"
-                initial={{ opacity: 0, x: 30, scale: 0.85 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                transition={{ delay: 1.4, duration: 0.7 }}
-                style={{ bottom: "25%", right: "-88px", background: "rgba(118,33,176,.25)", borderColor: "rgba(118,33,176,.45)" }}
-              >
-                <div style={{ fontSize: "1.25rem", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>92%</div>
-                <div style={{ fontSize: ".58rem", opacity: 0.6, textTransform: "uppercase", letterSpacing: ".1em", marginTop: 2 }}>Model Accuracy</div>
-              </motion.div>
             </div>
           </Magnet>
         </motion.div>
       </FadeIn>
-
-      <HeroVideoAnimation />
 
       <div
         style={{

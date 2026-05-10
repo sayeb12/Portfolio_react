@@ -14,7 +14,7 @@ const PROFILE = {
 const HERO_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_171521_25968ba2-b594-4b32-aab7-f6b69398a6fa.mp4";
 const SKILLS_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260330_145725_08886141-ed95-4a8e-8d6d-b75eaadce638.mp4";
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4";
 const CONTACT_VIDEO =
   "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
@@ -324,7 +324,8 @@ function useGlobalStyles() {
       .preview-bars{display:grid;grid-template-columns:1fr .7fr;gap:.8rem}
       .preview-panel{min-height:88px;border-radius:14px;background:rgba(215,226,234,.1);border:1px solid rgba(215,226,234,.12)}
       .research-card{border:1px solid rgba(215,226,234,.12);border-radius:24px;padding:clamp(2rem,4vw,3.5rem);position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(118,33,176,.08),transparent 60%)}
-      .contact-section{background:#0C0C0C;position:relative;overflow:hidden}
+      .contact-section{background:#0C0C0C;position:relative;overflow:hidden;min-height:100svh;display:flex;align-items:center;justify-content:center}
+      .contact-section .section-content{width:100%}
       .scroll-top{position:fixed;right:clamp(1rem,3vw,1.5rem);bottom:clamp(1rem,3vw,1.5rem);z-index:9998;width:54px;height:54px;border-radius:50%;border:1px solid rgba(215,226,234,.22);background:rgba(12,12,12,.58);backdrop-filter:blur(12px);color:#D7E2EA;display:flex;align-items:center;justify-content:center}
       @media (max-width:760px){
         .hero{min-height:780px}

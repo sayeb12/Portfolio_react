@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { BrainCircuit, Code2, Database, Network, RadioTower, ServerCog } from "lucide-react";
 
 const PROFILE = {
@@ -9,6 +9,9 @@ const PROFILE = {
   github: "https://github.com/sayeb12",
   portfolio: "https://sayeb12.github.io/Sayeb-new-portfolio/##contact",
 };
+
+const HERO_VIDEO =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_171521_25968ba2-b594-4b32-aab7-f6b69398a6fa.mp4";
 
 const SKILLS = [
   "Python",
@@ -233,24 +236,38 @@ function useGlobalStyles() {
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html{scroll-behavior:smooth;background:#0C0C0C;overflow-x:hidden}
       body,#root{min-width:320px;width:100%;min-height:100vh;overflow-x:hidden;background:#0C0C0C;font-family:'Kanit',sans-serif}
+      @media (pointer:fine){html,body,a,button{cursor:none}}
       body{overflow-wrap:anywhere}
       a{color:inherit}
       img{max-width:100%}
       .hg{background:linear-gradient(180deg,#646973 0%,#BBCCD7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
       .nav-link{color:#D7E2EA;text-decoration:none;font-weight:500;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(.72rem,1.25vw,1.15rem);transition:opacity 200ms}
       .nav-link:hover{opacity:.72}
+      .nav-link{position:relative}
+      .nav-link::after{content:"";position:absolute;bottom:-4px;left:0;width:0;height:1px;background:linear-gradient(90deg,#7621B0,#B600A8);transition:width .35s ease}
+      .nav-link:hover::after{width:100%}
       .pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:2px solid #D7E2EA;padding:.55rem 1.3rem;color:#D7E2EA;text-decoration:none;font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(.68rem,.95vw,.9rem);background:transparent;transition:background 200ms,transform 200ms;white-space:nowrap}
       .pill:hover{background:rgba(215,226,234,.1);transform:translateY(-1px)}
       .gradient-button{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:0;outline:2px solid #fff;outline-offset:-3px;background:linear-gradient(123deg,#18011F 7%,#B600A8 37%,#7621B0 72%,#BE4C00 100%);box-shadow:0 4px 4px rgba(181,1,167,.25),inset 4px 4px 12px #7721B1;color:white;text-decoration:none;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:clamp(.72rem,1.2vw,1rem) clamp(1.35rem,3vw,2.5rem);font-size:clamp(.72rem,.95vw,.9rem);white-space:nowrap}
-      .hero{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#0C0C0C}
-      .hero::before{content:"";position:absolute;inset:14% -20% auto -20%;height:42%;background:radial-gradient(circle,#2c1634 0%,rgba(44,22,52,0) 68%);opacity:.5;pointer-events:none}
+      .hero{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#060410}
+      .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.52;filter:saturate(.8) contrast(1.08) brightness(.52)}
+      .hero-video-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 50% 28%,rgba(12,12,12,.08),rgba(12,12,12,.42) 48%,rgba(12,12,12,.9) 100%),linear-gradient(180deg,rgba(12,12,12,.18),#0C0C0C 96%);pointer-events:none}
+      .hero::before{content:"";position:absolute;inset:14% -20% auto -20%;height:42%;background:radial-gradient(circle,#2c1634 0%,rgba(44,22,52,0) 68%);opacity:.28;pointer-events:none;z-index:2}
       .hero-title{font-size:clamp(3.4rem,15vw,13rem);font-weight:900;text-transform:uppercase;line-height:.86;letter-spacing:0;white-space:normal;max-width:100%;overflow-wrap:anywhere}
-      .portrait-wrap{position:absolute;left:50%;bottom:clamp(7.4rem,12vh,8.7rem);z-index:5;transform:translateX(-50%) rotate(-2deg)}
-      .portrait-card{width:clamp(210px,30vw,380px);aspect-ratio:1;border-radius:32px;padding:12px;background:linear-gradient(145deg,rgba(215,226,234,.14),rgba(190,76,0,.2));border:1px solid rgba(215,226,234,.28);box-shadow:0 34px 90px rgba(0,0,0,.5);backdrop-filter:blur(16px);position:relative;overflow:hidden}
-      .portrait-card::before{content:"";position:absolute;inset:18px;border-radius:26px;border:1px solid rgba(255,255,255,.16);pointer-events:none;z-index:2}
-      .portrait-media{width:100%;height:100%;border-radius:24px;overflow:hidden;background:radial-gradient(circle at 30% 20%,#314b5d 0%,#12131a 58%,#0c0c0c 100%);display:flex;align-items:center;justify-content:center}
-      .portrait-media img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(8%) contrast(1.08) saturate(.95)}
+      .portrait-wrap{position:absolute;left:50%;bottom:0;z-index:9;transform:translateX(-50%);perspective:1200px}
+      .portrait-stage{position:relative;display:inline-block;transform-style:preserve-3d}
+      .portrait-ring{position:absolute;inset:-22px;border-radius:34px 34px 92px 34px;border:1px dashed rgba(215,226,234,.28);pointer-events:none;z-index:0;transform:translateZ(-30px) rotate(-2deg)}
+      .portrait-glow{position:absolute;inset:-18px;border-radius:36px 36px 96px 36px;background:radial-gradient(circle at 50% 25%,rgba(215,226,234,.16),transparent 56%);filter:blur(16px);pointer-events:none;z-index:0}
+      .portrait-card{position:relative;width:clamp(190px,25vw,370px);height:clamp(235px,31vw,450px);border-radius:32px 32px 86px 32px;background:#0C0C0C;box-shadow:0 34px 90px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.18),inset 12px 12px 34px rgba(255,255,255,.055),inset -18px -18px 34px rgba(0,0,0,.5);overflow:hidden;z-index:2;transform:rotateX(3deg) rotateY(-7deg) rotateZ(-1deg)}
+      .portrait-card::before{content:"";position:absolute;inset:8px;border-radius:24px 24px 76px 24px;border:1px solid rgba(255,255,255,.18);pointer-events:none;z-index:4}
+      .portrait-card::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 24%,transparent 72%,rgba(255,255,255,.05));pointer-events:none;z-index:4}
+      .portrait-media{width:100%;height:100%;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center}
+      .portrait-media img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:contrast(1.04) brightness(1.02) saturate(1);transform:scale(1.04)}
+      .portrait-fade{position:absolute;left:0;right:0;bottom:0;height:32%;background:linear-gradient(transparent,rgba(12,12,12,.82));z-index:5;pointer-events:none}
+      .portrait-name{position:absolute;left:1rem;right:1rem;bottom:1rem;z-index:6;color:#D7E2EA}
+      .float-badge{position:absolute;z-index:20;background:rgba(12,12,12,.9);border:1px solid rgba(215,226,234,.16);backdrop-filter:blur(12px);border-radius:14px;padding:.5rem .9rem;text-align:center;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);color:#D7E2EA}
       .hero-tag{position:absolute;z-index:3;color:#D7E2EA;border:1px solid rgba(215,226,234,.24);background:rgba(12,12,12,.58);backdrop-filter:blur(10px);border-radius:999px;padding:.35rem .75rem;font-size:clamp(.62rem,.9vw,.78rem);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+      .hero-grid-overlay{position:absolute;inset:0;z-index:1;opacity:.018;background-image:linear-gradient(rgba(215,226,234,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(215,226,234,.6) 1px,transparent 1px);background-size:55px 55px;pointer-events:none}
       .hero-video{position:absolute;left:clamp(1rem,5vw,3rem);top:clamp(18rem,48vh,28rem);z-index:4;width:clamp(220px,25vw,360px);border-radius:24px;border:1px solid rgba(215,226,234,.18);background:rgba(17,18,23,.74);box-shadow:0 28px 80px rgba(0,0,0,.38);backdrop-filter:blur(12px);overflow:hidden}
       .hero-video-top{height:34px;background:#1d2029;display:flex;align-items:center;justify-content:space-between;padding:0 13px;color:#D7E2EA;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
       .hero-video-screen{position:relative;height:190px;padding:16px;overflow:hidden;background:radial-gradient(circle at 20% 25%,rgba(182,0,168,.3),transparent 32%),linear-gradient(135deg,#0f1018,#1c1424 45%,#101016)}
@@ -298,12 +315,14 @@ function useGlobalStyles() {
       .preview-title{color:white;font-size:clamp(1.35rem,3vw,2.8rem);font-weight:900;line-height:1;text-transform:uppercase;overflow-wrap:anywhere}
       .preview-bars{display:grid;grid-template-columns:1fr .7fr;gap:.8rem}
       .preview-panel{min-height:88px;border-radius:14px;background:rgba(215,226,234,.1);border:1px solid rgba(215,226,234,.12)}
+      .research-card{border:1px solid rgba(215,226,234,.12);border-radius:24px;padding:clamp(2rem,4vw,3.5rem);position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(118,33,176,.08),transparent 60%)}
       @media (max-width:760px){
         .hero{min-height:780px}
         nav{gap:.65rem;flex-wrap:wrap}
         .hero-title{font-size:clamp(3rem,18vw,5.6rem);line-height:.92}
-        .portrait-wrap{bottom:12rem}
-        .portrait-card{width:min(68vw,260px);border-radius:26px}
+        .portrait-wrap{bottom:10.5rem}
+        .portrait-card{width:min(58vw,245px);height:min(72vw,300px);border-radius:26px 26px 62px 26px}
+        .float-badge{display:none}
         .hero-tag{display:none}
         .hero-video{display:none}
         .marquee-row img{width:300px;height:195px}
@@ -316,6 +335,7 @@ function useGlobalStyles() {
         .preview-body{min-height:220px}
         .preview-bars{grid-template-columns:1fr}
       }
+      @media (pointer:coarse){.cursor-ring,.cursor-dot{display:none}}
     `;
     document.head.appendChild(style);
 
@@ -338,6 +358,251 @@ function FadeIn({ children, delay = 0, y = 28, x = 0, className = "", style = {}
       {children}
     </motion.div>
   );
+}
+
+function CustomCursor() {
+  const [pos, setPos] = useState({ x: -200, y: -200 });
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    const onMove = (event) => {
+      setPos({ x: event.clientX, y: event.clientY });
+      setHovered(Boolean(event.target.closest("a,button,[data-cursor]")));
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  return (
+    <>
+      <motion.div
+        className="cursor-ring"
+        animate={{ x: pos.x - 20, y: pos.y - 20, scale: hovered ? 1.6 : 1 }}
+        transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.4 }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: 40,
+          height: 40,
+          borderRadius: "50%",
+          border: "1.5px solid rgba(215,226,234,.5)",
+          pointerEvents: "none",
+          zIndex: 99999,
+          mixBlendMode: "difference",
+        }}
+      />
+      <motion.div
+        className="cursor-dot"
+        animate={{ x: pos.x - 3, y: pos.y - 3 }}
+        transition={{ type: "spring", stiffness: 600, damping: 30 }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: "#D7E2EA",
+          pointerEvents: "none",
+          zIndex: 99999,
+        }}
+      />
+    </>
+  );
+}
+
+function ScrollBar() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  return (
+    <motion.div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "2px",
+        zIndex: 9999,
+        background: "linear-gradient(90deg,#7621B0,#B600A8,#BBCCD7)",
+        scaleX,
+        transformOrigin: "0%",
+      }}
+    />
+  );
+}
+
+function AmbientGlow() {
+  const [pos, setPos] = useState({ x: -500, y: -500 });
+
+  useEffect(() => {
+    const onMove = (event) => setPos({ x: event.clientX, y: event.clientY });
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  return (
+    <motion.div
+      animate={{ x: pos.x - 250, y: pos.y - 250 }}
+      transition={{ type: "spring", stiffness: 60, damping: 30, mass: 1 }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: 500,
+        height: 500,
+        borderRadius: "50%",
+        background: "radial-gradient(circle,rgba(118,33,176,.07) 0%,transparent 70%)",
+        pointerEvents: "none",
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
+function NeuralCanvas() {
+  const canvasRef = useRef(null);
+  const frameRef = useRef(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const colors = ["rgba(118,33,176,", "rgba(182,0,168,", "rgba(187,204,215,", "rgba(100,105,115,"];
+    let width = 0;
+    let height = 0;
+    let nodes = [];
+    let orbs = [];
+
+    const resize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+      nodes = Array.from({ length: width < 760 ? 46 : 88 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.42,
+        vy: (Math.random() - 0.5) * 0.42,
+        r: Math.random() * 2 + 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        pulse: Math.random() * Math.PI * 2,
+      }));
+      orbs = Array.from({ length: 5 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: 70 + Math.random() * 110,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: (Math.random() - 0.5) * 0.16,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        pulse: Math.random() * Math.PI * 2,
+      }));
+    };
+
+    const onMouse = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      const bg = ctx.createLinearGradient(0, 0, width * 0.6, height);
+      bg.addColorStop(0, "#060410");
+      bg.addColorStop(0.45, "#0C0C0C");
+      bg.addColorStop(1, "#080510");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      for (const orb of orbs) {
+        orb.pulse += 0.008;
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+        if (orb.x < -orb.r) orb.x = width + orb.r;
+        if (orb.x > width + orb.r) orb.x = -orb.r;
+        if (orb.y < -orb.r) orb.y = height + orb.r;
+        if (orb.y > height + orb.r) orb.y = -orb.r;
+        const glow = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+        glow.addColorStop(0, `${orb.color}${0.1 + Math.sin(orb.pulse) * 0.02})`);
+        glow.addColorStop(1, `${orb.color}0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const { x: mx, y: my } = mouseRef.current;
+      for (const node of nodes) {
+        node.pulse += 0.018;
+        const dx = node.x - mx;
+        const dy = node.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < 140) {
+          const force = ((140 - dist) / 140) * 0.6;
+          node.vx += (dx / dist) * force;
+          node.vy += (dy / dist) * force;
+        }
+        node.vx *= 0.97;
+        node.vy *= 0.97;
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+        node.x = Math.max(0, Math.min(width, node.x));
+        node.y = Math.max(0, Math.min(height, node.y));
+      }
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140) {
+            const alpha = (1 - dist / 140) ** 2 * 0.35;
+            const line = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+            line.addColorStop(0, `${a.color}${alpha})`);
+            line.addColorStop(1, `${b.color}${alpha})`);
+            ctx.strokeStyle = line;
+            ctx.lineWidth = 0.7;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      for (const node of nodes) {
+        const radius = node.r + Math.sin(node.pulse) * 0.5;
+        ctx.fillStyle = `${node.color}${0.45 + Math.sin(node.pulse) * 0.12})`;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const scanY = (Date.now() * 0.03) % height;
+      const scan = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 60);
+      scan.addColorStop(0, "rgba(118,33,176,0)");
+      scan.addColorStop(0.5, "rgba(118,33,176,0.025)");
+      scan.addColorStop(1, "rgba(118,33,176,0)");
+      ctx.fillStyle = scan;
+      ctx.fillRect(0, scanY - 60, width, 120);
+
+      frameRef.current = requestAnimationFrame(draw);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", onMouse);
+    draw();
+    return () => {
+      cancelAnimationFrame(frameRef.current);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouse);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0, display: "block" }} />;
 }
 
 function Magnet({
@@ -417,9 +682,11 @@ function AnimatedText({ text, style = {} }) {
 
 function ContactButton({ href = `mailto:${PROFILE.email}` }) {
   return (
-    <a className="gradient-button" href={href}>
-      Contact Me
-    </a>
+    <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} data-cursor>
+      <a className="gradient-button" href={href}>
+        Contact Me
+      </a>
+    </motion.div>
   );
 }
 
@@ -472,8 +739,16 @@ function HeroVideoAnimation() {
 }
 
 function HeroSection() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const headingY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 60]);
+
   return (
-    <section id="home" className="hero">
+    <section ref={heroRef} id="home" className="hero">
+      <video className="hero-bg-video" src={HERO_VIDEO} autoPlay muted loop playsInline preload="metadata" />
+      <div className="hero-video-overlay" />
+      <div className="hero-grid-overlay" />
       <FadeIn y={-20}>
         <nav
           style={{
@@ -494,75 +769,80 @@ function HeroSection() {
       </FadeIn>
 
       <div style={{ padding: "clamp(1rem,4vw,2rem) clamp(1rem,5vw,2.5rem) 0", position: "relative", zIndex: 4 }}>
-        <FadeIn delay={0.12}>
-          <h1 className="hg hero-title">Hi, I&apos;m Sayeb</h1>
-        </FadeIn>
+        <motion.div style={{ y: headingY }}>
+          <FadeIn delay={0.12}>
+            <h1 className="hg hero-title">Hi, I&apos;m Sayeb</h1>
+          </FadeIn>
+        </motion.div>
       </div>
 
       <FadeIn delay={0.35} className="portrait-wrap">
-        <Magnet padding={150} strength={3}>
-          <div className="portrait-card">
-            <span className="hero-tag" style={{ left: "-22px", top: "24px" }}>
-              Full Stack
-            </span>
-            <span className="hero-tag" style={{ right: "-26px", bottom: "34px" }}>
-              AI Vision
-            </span>
-            <div className="portrait-media">
-              <img
-                src="https://github.com/sayeb12.png"
-                alt="Sayeb"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement.innerHTML =
-                    `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:clamp(5rem,13vw,9rem);font-weight:900;color:#BBCCD7;opacity:.45;font-family:'Kanit',sans-serif">S</div>`;
-                }}
-              />
+        <motion.div style={{ y: portraitY }}>
+          <Magnet padding={120} strength={4}>
+            <div className="portrait-stage">
+              <motion.div className="portrait-ring" animate={{ rotate: 360 }} transition={{ duration: 18, repeat: Infinity, ease: "linear" }} />
+              <div className="portrait-glow" />
+              <div className="portrait-card">
+                <div className="portrait-media">
+                  <img
+                    src="https://github.com/sayeb12.png"
+                    alt="Sayeb"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      e.currentTarget.parentElement.innerHTML =
+                        `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:clamp(5rem,13vw,9rem);font-weight:900;color:#BBCCD7;opacity:.45;font-family:'Kanit',sans-serif">S</div>`;
+                    }}
+                  />
+                </div>
+                <div className="portrait-fade" />
+                <div className="portrait-name">
+                  <div style={{ fontSize: "clamp(.55rem,.8vw,.7rem)", opacity: 0.5, textTransform: "uppercase", letterSpacing: ".15em" }}>
+                    Full Stack Developer
+                  </div>
+                  <div style={{ fontSize: "clamp(.8rem,1.3vw,1.05rem)", fontWeight: 600, letterSpacing: ".04em" }}>
+                    Sayeb / Dhaka, BD
+                  </div>
+                </div>
+              </div>
+
+              <motion.div
+                className="float-badge"
+                initial={{ opacity: 0, x: 30, scale: 0.85 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: 1.1, duration: 0.7 }}
+                style={{ top: "10%", right: "-96px", borderColor: "rgba(34,197,94,.3)", borderRadius: "999px", display: "flex", alignItems: "center", gap: ".5rem" }}
+              >
+                <motion.span animate={{ scale: [1, 1.4, 1] }} transition={{ repeat: Infinity, duration: 1.8 }} style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />
+                <span style={{ fontSize: ".7rem", fontWeight: 500, letterSpacing: ".1em", textTransform: "uppercase" }}>Available</span>
+              </motion.div>
+
+              <motion.div
+                className="float-badge"
+                initial={{ opacity: 0, x: -30, scale: 0.85 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: 1.25, duration: 0.7 }}
+                style={{ top: "35%", left: "-94px" }}
+              >
+                <div style={{ fontSize: "1.25rem", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>3.69</div>
+                <div style={{ fontSize: ".58rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: ".1em", marginTop: 2 }}>CGPA / 4.00</div>
+              </motion.div>
+
+              <motion.div
+                className="float-badge"
+                initial={{ opacity: 0, x: 30, scale: 0.85 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: 1.4, duration: 0.7 }}
+                style={{ bottom: "25%", right: "-88px", background: "rgba(118,33,176,.25)", borderColor: "rgba(118,33,176,.45)" }}
+              >
+                <div style={{ fontSize: "1.25rem", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>92%</div>
+                <div style={{ fontSize: ".58rem", opacity: 0.6, textTransform: "uppercase", letterSpacing: ".1em", marginTop: 2 }}>Model Accuracy</div>
+              </motion.div>
             </div>
-          </div>
-        </Magnet>
+          </Magnet>
+        </motion.div>
       </FadeIn>
 
       <HeroVideoAnimation />
-
-      <FadeIn
-        delay={0.22}
-        x={24}
-        y={0}
-        style={{
-          position: "absolute",
-          right: "clamp(1rem,4vw,3rem)",
-          top: "clamp(6rem,15vh,10rem)",
-          zIndex: 6,
-        }}
-      >
-        <div
-          style={{
-            border: "1px solid rgba(215,226,234,.2)",
-            borderRadius: "16px",
-            padding: ".75rem 1.25rem",
-            background: "rgba(215,226,234,.04)",
-            backdropFilter: "blur(8px)",
-            display: "grid",
-            gap: ".5rem",
-          }}
-        >
-          {[
-            ["3.69", "CGPA / 4.00"],
-            ["8", "Projects"],
-            ["92%", "Model Accuracy"],
-          ].map(([value, label]) => (
-            <div key={label} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "clamp(1rem,2.5vw,1.75rem)", fontWeight: 800, color: "#BBCCD7", lineHeight: 1 }}>
-                {value}
-              </div>
-              <div style={{ fontSize: "clamp(.6rem,.9vw,.75rem)", color: "#D7E2EA", opacity: 0.55, letterSpacing: ".08em", textTransform: "uppercase" }}>
-                {label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </FadeIn>
 
       <div
         style={{
@@ -737,6 +1017,7 @@ function SkillsSection() {
 }
 
 function ServicesSection() {
+  const [hovered, setHovered] = useState(null);
   return (
     <section
       id="services"
@@ -754,28 +1035,40 @@ function ServicesSection() {
       <div style={{ maxWidth: "980px", margin: "clamp(2.5rem,5vw,5rem) auto 0" }}>
         {SERVICES.map((service, index) => (
           <FadeIn key={service.num} delay={index * 0.06}>
-            <div
+            <motion.div
+              onHoverStart={() => setHovered(index)}
+              onHoverEnd={() => setHovered(null)}
+              animate={{ x: hovered === index ? 10 : 0, background: hovered === index ? "rgba(0,0,0,.025)" : "transparent" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               style={{
                 display: "grid",
                 gridTemplateColumns: "auto minmax(0,1fr)",
                 gap: "clamp(1rem,3vw,2.5rem)",
-                padding: "clamp(1.7rem,3vw,2.6rem) 0",
+                padding: "clamp(1.7rem,3vw,2.6rem) clamp(.5rem,1vw,1rem)",
                 borderTop: index === 0 ? "1px solid rgba(12,12,12,.15)" : "none",
                 borderBottom: "1px solid rgba(12,12,12,.15)",
+                borderRadius: 8,
               }}
             >
-              <span style={{ fontWeight: 900, fontSize: "clamp(2.6rem,8vw,6rem)", color: "#0C0C0C", lineHeight: 1, opacity: 0.18 }}>
+              <motion.span
+                animate={{ opacity: hovered === index ? 0.28 : 0.16, scale: hovered === index ? 1.05 : 1 }}
+                transition={{ duration: 0.3 }}
+                style={{ fontWeight: 900, fontSize: "clamp(2.6rem,8vw,6rem)", color: "#0C0C0C", lineHeight: 1 }}
+              >
                 {service.num}
-              </span>
+              </motion.span>
               <div style={{ minWidth: 0 }}>
                 <h3 style={{ color: "#0C0C0C", textTransform: "uppercase", fontSize: "clamp(1.1rem,2.2vw,2rem)", lineHeight: 1.1, marginBottom: ".65rem" }}>
                   {service.name}
                 </h3>
-                <p style={{ color: "#0C0C0C", opacity: 0.64, lineHeight: 1.7, fontWeight: 300, fontSize: "clamp(.9rem,1.35vw,1.1rem)" }}>
+                <motion.p
+                  animate={{ opacity: hovered === index ? 0.74 : 0.6 }}
+                  style={{ color: "#0C0C0C", lineHeight: 1.7, fontWeight: 300, fontSize: "clamp(.9rem,1.35vw,1.1rem)" }}
+                >
                   {service.desc}
-                </p>
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
           </FadeIn>
         ))}
       </div>
@@ -930,6 +1223,68 @@ function ProjectsSection() {
   );
 }
 
+function ResearchSection() {
+  return (
+    <section style={{ background: "#0C0C0C", padding: "0 clamp(1.25rem,5vw,2.5rem) clamp(5rem,8vw,8rem)" }}>
+      <FadeIn y={30}>
+        <motion.div className="research-card" whileHover={{ scale: 1.01 }} data-cursor>
+          <div
+            style={{
+              position: "absolute",
+              right: "2rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              fontSize: "clamp(6rem,15vw,14rem)",
+              fontWeight: 900,
+              color: "rgba(215,226,234,.035)",
+              lineHeight: 1,
+              userSelect: "none",
+            }}
+          >
+            R
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1.5rem", position: "relative", zIndex: 1 }}>
+            <div style={{ flex: "1 1 400px" }}>
+              <div
+                style={{
+                  display: "inline-block",
+                  background: "rgba(118,33,176,.2)",
+                  border: "1px solid rgba(182,0,168,.3)",
+                  borderRadius: "999px",
+                  padding: ".25rem .9rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <span style={{ color: "#D7E2EA", fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".15em", opacity: 0.8 }}>
+                  Research Highlight
+                </span>
+              </div>
+              <h3 style={{ color: "#D7E2EA", fontWeight: 700, fontSize: "clamp(1.1rem,2.5vw,1.8rem)", lineHeight: 1.2, marginBottom: ".75rem", maxWidth: "560px" }}>
+                Computer Vision-Based Human Activity Recognition for Elderly Care Monitoring
+              </h3>
+              <p style={{ color: "#D7E2EA", opacity: 0.55, fontSize: "clamp(.8rem,1.4vw,1rem)", lineHeight: 1.7, maxWidth: "520px", fontWeight: 300 }}>
+                Thesis work comparing CNN and LSTM architectures for real-time activity recognition, optimized toward practical elderly care monitoring and edge-focused inference.
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: ".75rem", alignItems: "flex-end", flexShrink: 0 }}>
+              {[
+                ["92%", "Model Accuracy"],
+                ["CNN + LSTM", "Architecture"],
+                ["Real-Time", "Inference"],
+              ].map(([value, label]) => (
+                <div key={label} style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "clamp(1.5rem,3vw,2.5rem)", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>{value}</div>
+                  <div style={{ fontSize: ".6rem", color: "#D7E2EA", opacity: 0.42, textTransform: "uppercase", letterSpacing: ".12em" }}>{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </FadeIn>
+    </section>
+  );
+}
+
 function ContactSection() {
   return (
     <section id="contact" className="section" style={{ background: "#0C0C0C", borderTop: "1px solid rgba(215,226,234,.08)", textAlign: "center" }}>
@@ -975,12 +1330,16 @@ export default function SayebPortfolio() {
   useGlobalStyles();
   return (
     <main style={{ background: "#0C0C0C", overflowX: "hidden", fontFamily: "'Kanit', sans-serif" }}>
+      <CustomCursor />
+      <ScrollBar />
+      <AmbientGlow />
       <HeroSection />
       <MarqueeSection />
       <AboutSection />
       <SkillsSection />
       <ServicesSection />
       <ProjectsSection />
+      <ResearchSection />
       <ContactSection />
     </main>
   );

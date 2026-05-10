@@ -19,6 +19,8 @@ const CONTACT_VIDEO =
   "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 const PROJECTS_VIDEO =
   "https://stream.mux.com/sDz01Os9GN02ltJvgikeaUvZWsLRiR5FX5GuadCRkQc7E.m3u8";
+const RESEARCH_VIDEO =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260306_074215_04640ca7-042c-45d6-bb56-58b1e8a42489.mp4";
 
 const SKILLS = [
   "Python",
@@ -1307,62 +1309,65 @@ function ProjectsSection() {
 
 function ResearchSection() {
   return (
-    <section style={{ background: "#0C0C0C", padding: "0 clamp(1.25rem,5vw,2.5rem) clamp(5rem,8vw,8rem)" }}>
-      <FadeIn y={30}>
-        <motion.div className="research-card" whileHover={{ scale: 1.01 }} data-cursor>
-          <div
-            style={{
-              position: "absolute",
-              right: "2rem",
-              top: "50%",
-              transform: "translateY(-50%)",
-              fontSize: "clamp(6rem,15vw,14rem)",
-              fontWeight: 900,
-              color: "rgba(215,226,234,.035)",
-              lineHeight: 1,
-              userSelect: "none",
-            }}
-          >
-            R
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1.5rem", position: "relative", zIndex: 1 }}>
-            <div style={{ flex: "1 1 400px" }}>
-              <div
-                style={{
-                  display: "inline-block",
-                  background: "rgba(118,33,176,.2)",
-                  border: "1px solid rgba(182,0,168,.3)",
-                  borderRadius: "999px",
-                  padding: ".25rem .9rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <span style={{ color: "#D7E2EA", fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".15em", opacity: 0.8 }}>
-                  Research Highlight
-                </span>
-              </div>
-              <h3 style={{ color: "#D7E2EA", fontWeight: 700, fontSize: "clamp(1.1rem,2.5vw,1.8rem)", lineHeight: 1.2, marginBottom: ".75rem", maxWidth: "560px" }}>
-                Computer Vision-Based Human Activity Recognition for Elderly Care Monitoring
-              </h3>
-              <p style={{ color: "#D7E2EA", opacity: 0.55, fontSize: "clamp(.8rem,1.4vw,1rem)", lineHeight: 1.7, maxWidth: "520px", fontWeight: 300 }}>
-                Thesis work comparing CNN and LSTM architectures for real-time activity recognition, optimized toward practical elderly care monitoring and edge-focused inference.
-              </p>
+    <section style={{ background: "#0C0C0C", padding: "clamp(5rem,8vw,8rem) clamp(1.25rem,5vw,2.5rem)", position: "relative", overflow: "hidden" }}>
+      <VideoBackground src={RESEARCH_VIDEO} />
+      <div className="section-video-overlay" />
+      <div className="section-content">
+        <FadeIn y={30}>
+          <motion.div className="research-card" whileHover={{ scale: 1.01 }} data-cursor>
+            <div
+              style={{
+                position: "absolute",
+                right: "2rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: "clamp(6rem,15vw,14rem)",
+                fontWeight: 900,
+                color: "rgba(215,226,234,.035)",
+                lineHeight: 1,
+                userSelect: "none",
+              }}
+            >
+              R
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: ".75rem", alignItems: "flex-end", flexShrink: 0 }}>
-              {[
-                ["92%", "Model Accuracy"],
-                ["CNN + LSTM", "Architecture"],
-                ["Real-Time", "Inference"],
-              ].map(([value, label]) => (
-                <div key={label} style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "clamp(1.5rem,3vw,2.5rem)", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>{value}</div>
-                  <div style={{ fontSize: ".6rem", color: "#D7E2EA", opacity: 0.42, textTransform: "uppercase", letterSpacing: ".12em" }}>{label}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1.5rem", position: "relative", zIndex: 1 }}>
+              <div style={{ flex: "1 1 400px" }}>
+                <div
+                  style={{
+                    display: "inline-block",
+                    background: "rgba(118,33,176,.2)",
+                    border: "1px solid rgba(182,0,168,.3)",
+                    borderRadius: "999px",
+                    padding: ".25rem .9rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <span style={{ color: "#D7E2EA", fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".15em", opacity: 0.8 }}>
+                    Research Highlight
+                  </span>
                 </div>
-              ))}
+                <h3 style={{ color: "#D7E2EA", fontWeight: 700, fontSize: "clamp(1.1rem,2.5vw,1.8rem)", lineHeight: 1.2, marginBottom: ".75rem", maxWidth: "560px" }}>
+                  Computer Vision-Based Human Activity Recognition for Elderly Care Monitoring
+                </h3>
+                <p style={{ color: "#D7E2EA", opacity: 0.65, fontSize: "clamp(.8rem,1.4vw,1rem)", lineHeight: 1.7, maxWidth: "520px", fontWeight: 300 }}>
+                  Thesis work comparing CNN and LSTM architectures for real-time activity recognition, optimized toward practical elderly care monitoring and edge-focused inference.
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: ".75rem", alignItems: "flex-end", flexShrink: 0 }}>
+                {[
+                  ["CNN + LSTM", "Architecture"],
+                  ["Real-Time", "Inference"],
+                ].map(([value, label]) => (
+                  <div key={label} style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "clamp(1.5rem,3vw,2.5rem)", fontWeight: 900, color: "#BBCCD7", lineHeight: 1 }}>{value}</div>
+                    <div style={{ fontSize: ".6rem", color: "#D7E2EA", opacity: 0.42, textTransform: "uppercase", letterSpacing: ".12em" }}>{label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </FadeIn>
+          </motion.div>
+        </FadeIn>
+      </div>
     </section>
   );
 }
